@@ -1,0 +1,74 @@
+# import libraries
+import pandas as pd
+from datetime import datetime
+
+# import dis forecasts and specify sheet
+dis_als = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- ALS.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+dis_key = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- KEY.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+dis_inx = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- INX.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+dis_map = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- MAP.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+dis_mar = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- MAR.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+dis_mnt = pd.read_excel("C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/data/SS26 FTW and APEQ MF1 Forecasting -- MNT.xlsx",
+                        sheet_name="ASSORTMENT PLAN (FTW & APEQ)")
+
+print("checkpoint 1: all excel files loaded")
+
+# drop the top rows that are empty, 6 in this case
+dis_als = dis_als.iloc[6:].reset_index(drop=True)
+dis_inx = dis_inx.iloc[6:].reset_index(drop=True)
+dis_key = dis_key.iloc[6:].reset_index(drop=True)
+dis_map = dis_map.iloc[6:].reset_index(drop=True)
+dis_mar = dis_mar.iloc[6:].reset_index(drop=True)
+dis_mnt = dis_mnt.iloc[6:].reset_index(drop=True)
+
+print("checkpoint 2: dropped empty rows and set first data row as column header")
+
+# set the first row as column header
+dis_als.columns = dis_als.iloc[0]
+dis_als = dis_als[1:].reset_index(drop=True)
+
+dis_inx.columns = dis_inx.iloc[0]
+dis_inx = dis_inx[1:].reset_index(drop=True)
+
+dis_key.columns = dis_key.iloc[0]
+dis_key = dis_key[1:].reset_index(drop=True)
+
+dis_mnt.columns = dis_mnt.iloc[0]
+dis_mnt = dis_mnt[1:].reset_index(drop=True)
+
+dis_map.columns = dis_map.iloc[0]
+dis_map = dis_map[1:].reset_index(drop=True)
+
+dis_mar.columns = dis_mar.iloc[0]
+dis_mar = dis_mar[1:].reset_index(drop=True)
+
+# add dis name to df
+dis_als["DIS"] = "ALS"
+dis_inx["DIS"] = "INX"
+dis_key["DIS"] = "KEY"
+dis_map["DIS"] = "MAP"
+dis_mar["DIS"] = "MAR"
+dis_mnt["DIS"] = "MNT"
+
+print("checkpoint 3: added distributor name to df")
+
+# stack dfs on top of each other
+dis_stacked = pd.concat([dis_als, dis_inx, dis_key, dis_map, dis_mar, dis_mnt], axis=0, ignore_index=True)
+
+print("checkpoint 4: stack complete")
+
+# enter season
+print("enter seasonand MF round, eg SS26_MF2:")
+season = input(str())
+
+# export dis_stacked as excel
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+output_file = f"C:/Users/luke.roberts/OneDrive - ASICS Corporation/Documents/vs_code/output/dis_consolidated_{season}_{timestamp}.xlsx"
+dis_stacked.to_excel(output_file, index=False)
+
+print(f"checkpoint 5: export to excel successful, saved as {output_file}")
